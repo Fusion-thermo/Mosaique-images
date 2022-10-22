@@ -124,11 +124,12 @@ def afficher():
 			remplacement_region=Image.open(filename)
 			remplacement_region=remplacement_region.resize((LARGEUR_PHOTOS,HAUTEUR_PHOTOS))
 			Objectif.paste(remplacement_region,box)
-	Objectif.save("Rendus/"+str(datetime.now()).replace(":","-")[:-7]+" Rendu "+str(NB_COLONNES)+".jpg")
+	Objectif.save("Rendus/"+str(datetime.now()).replace(":","-")[:-7]+" Rendu taille "+str(NB_COLONNES)+".jpg")
 	#Objectif.show()
 
 initialiseimages()
 resolution=[1,2,3,6,9,12,15,20,25,37,50,70,90,100,125,150]
+#resolution=[100]
 for i in resolution:
 	print(i)
 	Objectif=Image.open("Objectif.jpg")
