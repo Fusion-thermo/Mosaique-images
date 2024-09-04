@@ -82,7 +82,8 @@ def afficher(objectif):
 	objectif.save(chemin + "/Rendus/"+str(datetime.now()).replace(":","-")[:-7]+" Rendu "+str(NB_COLONNES)+".jpg")
 
 chemin = "C:/Users/OneDrive/Documents/Python/Mosaïque photos/Mosaique-images"
-Objectif = Image.open(chemin + "/Objectif.jpg")
+nom_image = "Objectif.jpg"
+Objectif = Image.open(chemin + "/" + nom_image)
 
 initialiseimages()
 resolution = [1,2,3,6,9,12,15,20,25,37,50,70,90,100,125,150]
