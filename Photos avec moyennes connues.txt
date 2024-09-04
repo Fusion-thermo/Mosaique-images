@@ -1,0 +1,1 @@
+{(146.8575972222222, 8.058475, 20.44238888888889): 'C:/Users/jeanb/OneDrive/Documents/Python/Mosaïque photos/Mosaique-images/Images\\rose-rouge.jpeg', (163.83092546296297, 174.59020416666667, 190.5768398148148): 'C:/Users/jeanb/OneDrive/Documents/Python/Mosaïque photos/Mosaique-images/Images\\trees-4830285-1800x1200.jpg'}

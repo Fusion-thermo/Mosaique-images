@@ -10,7 +10,6 @@ import numpy as np
 #moyenne pondérée pour chaque composante rgb
 def moyennepixels_ponderee(image):
 	red, green, blue = image.split()
-	# red, green, blue = np.array(red), np.array(green), np.array(blue)
 	red, green, blue = np.mean(red), np.mean(green), np.mean(blue)
 	return red, green, blue
 
@@ -46,7 +45,7 @@ def initialiseimages():
 
 	print("Liste initialisée")
 
-def afficher(Objectif):
+def afficher(objectif):
 	moyenne_pixels_photo = {}
 	with open(chemin + "/Photos avec moyennes connues.txt","r") as photos_connues:
 		texte = photos_connues.read()
@@ -56,36 +55,47 @@ def afficher(Objectif):
 	#le portrait est découpé en rectangles, on trouve la couleur moyenne de chaque zone, on trouve dans le dict
 	#le filename dont la couleur moyenne est la plus proche, et on affiche cette image (redimensionnée) dans le rectangle du portrait.
 	for colonne in range(NB_COLONNES):
-		print("Colonne {0}".format(colonne))
+		print("Colonne {0}".format(colonne+1))
 		for ligne in range(NB_LIGNES):
 			box = (colonne*LARGEUR_PHOTOS,ligne*HAUTEUR_PHOTOS,colonne*LARGEUR_PHOTOS+LARGEUR_PHOTOS,ligne*HAUTEUR_PHOTOS+HAUTEUR_PHOTOS)
-			region = Objectif.crop(box)
+			# box = (round(colonne*LARGEUR_PHOTOS), round(ligne*HAUTEUR_PHOTOS), round(colonne*LARGEUR_PHOTOS+LARGEUR_PHOTOS), round(ligne*HAUTEUR_PHOTOS+HAUTEUR_PHOTOS))
+			dim_largeur = box[2] - box[0]
+			dim_hauteur = box[3] - box[1]
+			region = objectif.crop(box)
 			couleur = moyennepixels_ponderee(region)
 			min_difference = 3 * 256
 			for rgb in moyenne_pixels_photo.keys():
-				difference = abs(rgb[0]-couleur[0]) + abs(rgb[1]-couleur[1]) + abs(rgb[2]-couleur[2])
+				difference = abs(rgb[0]-couleur[0])+abs(rgb[1]-couleur[1])+abs(rgb[2]-couleur[2])
 				if difference<min_difference:
 					min_difference = difference
 					filename = moyenne_pixels_photo[rgb]
 			if filename in save_images_resized.keys():
 				remplacement_region = save_images_resized[filename]
+				#priorité à la vitesse d'exécution, on ne sera pas bon au pixel près à cause des arrondis
+				# box = [round(colonne*LARGEUR_PHOTOS), round(ligne*HAUTEUR_PHOTOS), round(colonne*LARGEUR_PHOTOS) + remplacement_region.width, round(ligne*HAUTEUR_PHOTOS) + remplacement_region.height]
 			else:
 				remplacement_region = Image.open(filename)
-				remplacement_region = remplacement_region.resize((LARGEUR_PHOTOS,HAUTEUR_PHOTOS)) #responsable de plus de 95% du temps de calcul
+				remplacement_region = remplacement_region.resize((dim_largeur,dim_hauteur)) #responsable de plus de 95% du temps de calcul
 				save_images_resized[filename] = remplacement_region
-			Objectif.paste(remplacement_region,box)
-	Objectif = Objectif.crop((0, 0, NB_COLONNES*LARGEUR_PHOTOS, NB_LIGNES*HAUTEUR_PHOTOS))
-	Objectif.save(chemin + "/Rendus/"+str(datetime.now()).replace(":","-")[:-7]+" Rendu "+str(NB_COLONNES)+".jpg")
+			objectif.paste(remplacement_region,box)
+	# objectif = objectif.crop((0, 0, colonne*LARGEUR_PHOTOS+LARGEUR_PHOTOS, ligne*HAUTEUR_PHOTOS+HAUTEUR_PHOTOS))
+	objectif.save(chemin + "/Rendus/"+str(datetime.now()).replace(":","-")[:-7]+" Rendu "+str(NB_COLONNES)+".jpg")
 
 chemin = "C:/Users/jeanb/OneDrive/Documents/Python/Mosaïque photos/Mosaique-images"
 Objectif = Image.open(chemin + "/Objectif.jpg")
 
 initialiseimages()
 resolution = [1,2,3,6,9,12,15,20,25,37,50,70,90,100,125,150]
-resolution = [100]
+# resolution = [125]
 for i in resolution:
 	print(i,"x",i)
 	NB_LIGNES = NB_COLONNES = i
-	LARGEUR_PHOTOS = Objectif.width//NB_COLONNES
-	HAUTEUR_PHOTOS = Objectif.height//NB_LIGNES
-	afficher(Objectif)
+	objectif = Objectif.copy()
+	LARGEUR_PHOTOS = round(objectif.width/NB_COLONNES)
+	HAUTEUR_PHOTOS = round(objectif.height/NB_LIGNES)
+	# HAUTEUR_PHOTOS = objectif.height/NB_LIGNES
+	# LARGEUR_PHOTOS = objectif.width/NB_COLONNES
+	# HAUTEUR_PHOTOS = objectif.height//NB_LIGNES
+	# LARGEUR_PHOTOS = objectif.width//NB_COLONNES
+	print(LARGEUR_PHOTOS,objectif.width/NB_COLONNES, HAUTEUR_PHOTOS,objectif.height/NB_LIGNES)
+	afficher(objectif)
