@@ -81,7 +81,7 @@ def afficher(objectif):
 	# objectif = objectif.crop((0, 0, colonne*LARGEUR_PHOTOS+LARGEUR_PHOTOS, ligne*HAUTEUR_PHOTOS+HAUTEUR_PHOTOS))
 	objectif.save(chemin + "/Rendus/"+str(datetime.now()).replace(":","-")[:-7]+" Rendu "+str(NB_COLONNES)+".jpg")
 
-chemin = "C:/Users/jeanb/OneDrive/Documents/Python/Mosaïque photos/Mosaique-images"
+chemin = "C:/Users/OneDrive/Documents/Python/Mosaïque photos/Mosaique-images"
 Objectif = Image.open(chemin + "/Objectif.jpg")
 
 initialiseimages()
