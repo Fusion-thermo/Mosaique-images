@@ -13,8 +13,9 @@ def moyennepixels_ponderee(image):
 	red, green, blue = np.mean(red), np.mean(green), np.mean(blue)
 	return red, green, blue
 
-
+extensions = ['jpg','jpeg',"JPG"]
 def initialiseimages():
+	print("Initialisation en cours")
 	#on met dans un dictionnaire tous les noms des images dont on déjà trouvé la couleur moyenne, avec cette couleur moyenne associée
 	database = chemin + "/Photos avec moyennes connues.txt"
 	if os.path.exists(database):
@@ -28,7 +29,9 @@ def initialiseimages():
 	all_images = glob.glob(chemin + '/Images/*')
 	compteur = 0
 	for filename in all_images: #pour toutes les images du dossier source
-		#print(filename)
+		# print(filename)
+		if filename[filename.rfind('.')+1:] not in extensions:
+			continue
 		compteur+=1
 		if filename in moyenne_pixels_photo.values():
 			continue
@@ -43,7 +46,7 @@ def initialiseimages():
 	photos_connues.write(str(moyenne_pixels_photo))
 	photos_connues.close()
 
-	print("Liste initialisée")
+	print("Initialisation terminée")
 
 def afficher(objectif):
 	moyenne_pixels_photo = {}
@@ -52,7 +55,7 @@ def afficher(objectif):
 	moyenne_pixels_photo = eval(texte)
 	save_images_resized = {}
 
-	#le portrait est découpé en rectangles, on trouve la couleur moyenne de chaque zone, on trouve dans le dict
+	#le portrait est découpé en rectangles, on trouve la couleur moyenne de chaque zone, puis on trouve dans le dict
 	#le filename dont la couleur moyenne est la plus proche, et on affiche cette image (redimensionnée) dans le rectangle du portrait.
 	for colonne in range(NB_COLONNES):
 		print("Colonne {0}".format(colonne+1))
@@ -81,13 +84,15 @@ def afficher(objectif):
 	# objectif = objectif.crop((0, 0, colonne*LARGEUR_PHOTOS+LARGEUR_PHOTOS, ligne*HAUTEUR_PHOTOS+HAUTEUR_PHOTOS))
 	objectif.save(chemin + "/Rendus/"+str(datetime.now()).replace(":","-")[:-7]+" Rendu "+str(NB_COLONNES)+".jpg")
 
+
+
+
 chemin = "C:/Users/OneDrive/Documents/Python/Mosaïque photos/Mosaique-images"
-nom_image = "Objectif.jpg"
-Objectif = Image.open(chemin + "/" + nom_image)
+Objectif = Image.open(chemin + "/Objectif.jpg")
 
 initialiseimages()
 resolution = [1,2,3,6,9,12,15,20,25,37,50,70,90,100,125,150]
-# resolution = [125]
+resolution = [500]
 for i in resolution:
 	print(i,"x",i)
 	NB_LIGNES = NB_COLONNES = i
@@ -98,5 +103,5 @@ for i in resolution:
 	# LARGEUR_PHOTOS = objectif.width/NB_COLONNES
 	# HAUTEUR_PHOTOS = objectif.height//NB_LIGNES
 	# LARGEUR_PHOTOS = objectif.width//NB_COLONNES
-	print(LARGEUR_PHOTOS,objectif.width/NB_COLONNES, HAUTEUR_PHOTOS,objectif.height/NB_LIGNES)
+	# print(LARGEUR_PHOTOS,objectif.width/NB_COLONNES, HAUTEUR_PHOTOS,objectif.height/NB_LIGNES)
 	afficher(objectif)
